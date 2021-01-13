@@ -1,0 +1,27 @@
+#define alpha 0.9
+float filter;
+float origin;
+float pre;
+float erase_noise;
+float low_pass;
+void setup() {
+ Serial.begin(9600);
+
+}
+
+void loop() {
+  origin = getDistanceSharp(A0);
+  filter = 0.9*(filter + origin - pre);
+  erase_noise = = origin - filter;
+  low_pass = alpha*low_pass +(1-alpha)*erase_noise;
+  Serial.println(low_pass);
+}
+
+float getDistanceSharp(int PIN){
+  float sensorValue = analogRead(PIN);
+  float volts = sensorValue*0.0048828125;
+  float distance = 138773.464825 * pow(sensorValue, -1.0233470);
+  if(volts <0.2 || distance > 1200)
+    distance = 1200;
+  return distance;
+}
