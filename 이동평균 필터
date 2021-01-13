@@ -1,0 +1,33 @@
+//이동평균필터 - 노이즈 비율이 적을때 많이 사용
+#define ALPHA 0.9
+#define FILTER_SIZE 10
+float filter;
+float origin;
+float filter_result;
+float window_filter[FILTER_SIZE];
+int index = 0;
+void setup() {
+ Serial.begin(9600);
+
+}
+
+void loop() {
+  origin = getDistanceSharp(A0);
+  window_filter[index] = origin;
+  index = (index+1)%FILTER_SIZE;
+  for(int i = 0; i <FILTER_SIZE; i++)
+  {
+    filter_result += window_filter[i];
+    }
+    filter_result/=FILTER_SIZE;
+  Serial.println(filter_result);
+}
+
+float getDistanceSharp(int PIN){
+  float sensorValue = analogRead(PIN);
+  float volts = sensorValue*0.0048828125;
+  float distance = 138773.464825 * pow(sensorValue, -1.0233470);
+  if(volts <0.2 || distance > 1200)
+    distance = 1200;
+  return distance;
+}
